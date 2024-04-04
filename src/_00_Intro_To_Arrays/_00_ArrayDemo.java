@@ -6,13 +6,10 @@ public class _00_ArrayDemo {
         /*
          * Declaring and Initializing an array of Strings
          */
-        String[] names = new String[5];
+     //   String[] names = new String[5];
         
-        names[0] = "Jan";
-        names[1] = "Sara";
-        names[2] = "Fred";
-        names[3] = "Marc";
-        names[4] = "Randy";
+        String[] names = {"Jan", "sara","fred","marc","randy"};
+    
 
         /*
          * Declaring and Initializing an array of ints using a '{' and '}'

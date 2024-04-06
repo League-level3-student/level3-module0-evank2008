@@ -64,16 +64,55 @@ static int south = 3;
 static int west = 4;
 static char cowHead = 'c';
 static ArrayList<int[]> headLoci = new ArrayList<int[]>();
+//contains x and y of all cow heads
 static ArrayList<int[]> headBodyLoci = new ArrayList<int[]>();
+static ArrayList<int[]> fullCowLoci = new ArrayList<int[]>();
+//contain x and y of cow heads and a variable for direction in which the rest is
     public static int[] findWrongWayCow(final char[][] field) {
-    	
+  // Fill in the code to return the [col, row] coordinate position of the
+        // head (letter 'c') of the wrong way cow!   	
     	findTheHeads(field);
     	//headLoci now contains coords of every c in the field
     	findTheBodies(field);
-        // Fill in the code to return the [col, row] coordinate position of the
-        // head (letter 'c') of the wrong way cow!
-       return null;
+        //headBodyLoci now contains coords and direction for c+o
+    	findTheTails(field);
+    	//fullCowLoci now contains every cow location ad direction
+    	//can i just check the directions to spot the oddster goofball
+       return whichIsFacingWrong();
     }
+    static int[] whichIsFacingWrong() {
+    	int defaultDirection;
+    	//store first direction
+    	int firstDirection = fullCowLoci.get(0)[2];
+    	//if second cow has same direction then that is default direction
+    	int secondDirection = fullCowLoci.get(1)[2];
+    	if(firstDirection==secondDirection) {
+    		defaultDirection=firstDirection;
+    	} else {
+    		//first and second are different
+    		//third is tiebreaker
+    		int thirdDirection=fullCowLoci.get(2)[2];
+    		if(firstDirection==thirdDirection) {
+    			//second must be wrong
+    			return fullCowLoci.get(1);
+    		} else {
+    			//first must be wrong
+    			return fullCowLoci.get(0);
+    		}
+    	} 
+    	//first 2 or 3 cows are same
+    	//next cow to violate default direction is the one
+    	for (int[] coords : fullCowLoci) {
+    		int directionFaced = coords[2];
+    		if(directionFaced!=defaultDirection) {
+    			//first outlier cow
+    			return coords;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
     static void findTheHeads(char[][] field) {
     	int x=0;
         int y=0;
@@ -95,18 +134,67 @@ static ArrayList<int[]> headBodyLoci = new ArrayList<int[]>();
     		if(getEastNeighbor(field,x,y)=='o') {
     			headBodyLoci.add(new int[] {x,y,east});
     		}
-    		//ADD CODE HERE BOI
-    		
+    		//not else bc a cow head could have multiple os coming off of it
+    		if(getWestNeighbor(field,x,y)=='o') {
+    			headBodyLoci.add(new int[] {x,y,west});
+    		}
+    		if(getNorthNeighbor(field,x,y)=='o') {
+    			headBodyLoci.add(new int[] {x,y,north});
+    		}
+    		if(getSouthNeighbor(field,x,y)=='o') {
+    			headBodyLoci.add(new int[] {x,y,south});
+    		}
     		
     	}
     }
     
-    static public char getEastNeighbor(char[][] matrix, int row, int col) {
+    static void findTheTails(char[][]field) {
+    	for(int[] coords : headBodyLoci) {
+    		int x = coords[0];
+    		int y = coords[1];
+    		switch(coords[2]) {
+    		case 1:
+    			//north
+    			if(getNorthNeighbor(field,x,y)!='`') {
+    				if(getNorthNeighbor(field,x,y-1)=='w') {
+    					fullCowLoci.add(new int[] {x,y,north});
+    				}
+    			}
+    			break;
+    		case 2:
+    			//east
+    			if(getEastNeighbor(field,x,y)!='`') {
+    				if(getEastNeighbor(field,x+1,y)=='w') {
+    					fullCowLoci.add(new int[] {x,y,east});
+    				}
+    			}
+    			break;
+    		case 3:
+    			//south
+    			if(getSouthNeighbor(field,x,y)!='`') {
+    				if(getSouthNeighbor(field,x,y+1)=='w') {
+    					fullCowLoci.add(new int[] {x,y,south});
+    				}
+    			}
+    			break;
+    		case 4:
+    			//west
+    			if(getWestNeighbor(field,x,y)!='`') {
+    				if(getWestNeighbor(field,x-1,y)=='w') {
+    					fullCowLoci.add(new int[] {x,y,west});
+    				}
+    			}
+    			break;
+    		}
+    	}
+    }
+    static public char getEastNeighbor(char[][] matrix, int col, int row) {
     	if(col+1>=matrix[row].length) {
-    		System.out.println("invalid");
+    		System.out.println("east invalid row "+ row + " col " + col);
     		return '`';
     	}
     	else {
+    		System.out.println("east valid row "+ row + " col " + col);
     		return matrix[row][col+1];
     	}
     }
@@ -114,38 +202,33 @@ static ArrayList<int[]> headBodyLoci = new ArrayList<int[]>();
     static public char getWestNeighbor(char[][] matrix, int row, int col) {
         
     	if(col==0) {
-    		System.out.println("invalid");
+    		System.out.println("west invalid row "+ row + " col " + col);
     		return '`';
     	}
     	else {
+    		System.out.println("west valid row "+ row + " col " + col);
     		return matrix[row][col-1];
     	}
     }
     
     static public char getNorthNeighbor(char[][] matrix, int row, int col) {
     	if(row<1) {
-    		System.out.println("invalid");
-    		return '`';
-    	}
-    	if(matrix[row-1].length<col+1) {
-    		System.out.println("invalid");
+    		System.out.println("north invalid row"+ row + " col " + col);
     		return '`';
     	}
     	else {
+    		System.out.println("north valid row "+ row + " col " + col);
     		return matrix[row-1][col];
     	}
     }
     
-    static public char getSouthNeighbor(char[][] matrix, int row, int col) {
+    static public char getSouthNeighbor(char[][] matrix, int col, int row) {
     	if(row+1>=matrix.length) {
-    		System.out.println("invalid");
-    		return '`';
-    	}
-    	if(matrix[row+1].length<col+1) {
-    		System.out.println("invalid");
+    		System.out.println("south invalid row "+ row + " col " + col);
     		return '`';
     	}
     	else {
+    		System.out.println("south valid row "+ row + " col " + col);
     		return matrix[row+1][col];
     	}
     }

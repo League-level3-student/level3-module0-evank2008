@@ -49,15 +49,14 @@
 package _07_The_Wrong_Way_Cow;
 
 import java.util.ArrayList;
-
+//matrices have the y first
+//matrix[y][x]
 public class TheWrongWayCow {
- //make a separate 2d array to find all instances of c DONE
-//then make an array to find os next to cs             IN PROGRESS - LINE 98
-//then an array to find ws next to both
-//have array of all 'cow's
-//find the one that is different from the rest
+
 	
-	//to store x and y of every c in the field
+	//HEY YOU FIGURE THIS OUT
+	//WHY DO THE TESTS PASS show(field) INSTEAD OF JUST field EXPLAIN AAAAAAAAAAAAAAAA
+	
 static int north=1;
 static int east=2;
 static int south = 3;
@@ -67,6 +66,7 @@ static ArrayList<int[]> headLoci = new ArrayList<int[]>();
 //contains x and y of all cow heads
 static ArrayList<int[]> headBodyLoci = new ArrayList<int[]>();
 static ArrayList<int[]> fullCowLoci = new ArrayList<int[]>();
+static int[] wrongCowStripped = new int[2];
 //contain x and y of cow heads and a variable for direction in which the rest is
     public static int[] findWrongWayCow(final char[][] field) {
   // Fill in the code to return the [col, row] coordinate position of the
@@ -78,9 +78,15 @@ static ArrayList<int[]> fullCowLoci = new ArrayList<int[]>();
     	findTheTails(field);
     	//fullCowLoci now contains every cow location ad direction
     	//can i just check the directions to spot the oddster goofball
-       return whichIsFacingWrong();
+    	
+    	//theWrongCowFull has 3 variables, make a new temporary int[] to remove the third 
+    	wrongCowStripped[0]=theWrongCowFull()[0];
+    	wrongCowStripped[1]=theWrongCowFull()[1];
+       return wrongCowStripped;
     }
-    static int[] whichIsFacingWrong() {
+    static int[] theWrongCowFull() {
+    	//this returns an int array of the entire row of fullCowLoci.
+    	//Must strip the direction from it to submit.
     	int defaultDirection;
     	//store first direction
     	int firstDirection = fullCowLoci.get(0)[2];
@@ -188,48 +194,48 @@ static ArrayList<int[]> fullCowLoci = new ArrayList<int[]>();
     		}
     	}
     }
-    static public char getEastNeighbor(char[][] matrix, int col, int row) {
-    	if(col+1>=matrix[row].length) {
-    		System.out.println("east invalid row "+ row + " col " + col);
+    static public char getEastNeighbor(char[][] matrix, int x, int y) {
+    	if(x+1>=matrix[y].length) {
+    		System.out.println("east invalid y "+ y + " x " + x);
     		return '`';
     	}
     	else {
-    		System.out.println("east valid row "+ row + " col " + col);
-    		return matrix[row][col+1];
+    		System.out.println("east valid y "+ y + " x " + x);
+    		return matrix[y][x+1];
     	}
     }
     
-    static public char getWestNeighbor(char[][] matrix, int row, int col) {
+    static public char getWestNeighbor(char[][] matrix, int x, int y) {
         
-    	if(col==0) {
-    		System.out.println("west invalid row "+ row + " col " + col);
+    	if(x<1) {
+    		System.out.println("west invalid x "+ x + " y " + y);
     		return '`';
     	}
     	else {
-    		System.out.println("west valid row "+ row + " col " + col);
-    		return matrix[row][col-1];
+    		System.out.println("west valid x "+ x + " y " + y);
+    		return matrix[y][x-1];
     	}
     }
     
-    static public char getNorthNeighbor(char[][] matrix, int row, int col) {
-    	if(row<1) {
-    		System.out.println("north invalid row"+ row + " col " + col);
+    static public char getNorthNeighbor(char[][] matrix, int x, int y) {
+    	if(y<1) {
+    		System.out.println("north invalid x"+ x + " y " + y);
     		return '`';
     	}
     	else {
-    		System.out.println("north valid row "+ row + " col " + col);
-    		return matrix[row-1][col];
+    		System.out.println("north valid x "+ x + " y " + y);
+    		return matrix[y-1][x];
     	}
     }
     
-    static public char getSouthNeighbor(char[][] matrix, int col, int row) {
-    	if(row+1>=matrix.length) {
-    		System.out.println("south invalid row "+ row + " col " + col);
+    static public char getSouthNeighbor(char[][] matrix, int x, int y) {
+    	if(y+1>=matrix.length) {
+    		System.out.println("south invalid x "+ x + " y " + y);
     		return '`';
     	}
     	else {
-    		System.out.println("south valid row "+ row + " col " + col);
-    		return matrix[row+1][col];
+    		System.out.println("south valid x "+ x + " y " + y);
+    		return matrix[y+1][x];
     	}
     }
 }
